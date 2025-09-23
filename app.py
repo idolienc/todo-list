@@ -37,7 +37,8 @@ class MainWindow(QtWidgets.QDialog):
 
         self.item_line.returnPressed.connect(self.on_item_line_return_pressed)
         self.remove_task_button.clicked.connect(self.on_remove_task_btn_clicked)
-
+        self.todo_list.itemDoubleClicked.connect(self.on_task_selected)
+            
     def on_item_line_return_pressed(self):
         text = self.item_line.text()
         if not text:
@@ -55,7 +56,22 @@ class MainWindow(QtWidgets.QDialog):
                 self.todo_list.takeItem(i)
                 new_item = "- " + item.text()
                 self.history_list.addItem(new_item)
-                
+
+    def on_task_selected(self, item):
+
+        for i in range(self.tab_bar.count()):
+            if self.tab_bar.tabText(i) == item.text():
+                self.tab_bar.removeTab(i)
+                return
+            
+        self.subtask_view = QtWidgets.QWidget()
+
+        self.subtask_list = QtWidgets.QListWidget()
+
+        subtask_view_layout = QtWidgets.QVBoxLayout(self.subtask_view)
+        subtask_view_layout.addWidget(self.subtask_list)
+        
+        self.tab_bar.addTab(self.subtask_view, item.text())      
 
 app = QtWidgets.QApplication(sys.argv)
 window = MainWindow()
